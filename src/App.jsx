@@ -26,6 +26,7 @@ function App() {
       <Route path="/Original" element={<Original/>}/>
       <Route path="/Usuario" element={<Usuario/>}/>
       <Route path="/Menu" element={<Menu/>}/>
+      <Route path="/detalle/:name" element={<Detalle />} />
 
       </Routes>
     </Router>
