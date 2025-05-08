@@ -4,6 +4,7 @@ import { AppProvider } from './contexto/contexto';
 
 import './App.css'
 import Aleatorios from './componentes/Aleatorios'
+import Capturados from './componentes/Capturados';
 import Detalle from './componentes/Detalle'
 import Favoritos from './componentes/Favoritos'
 import Original from './componentes/Original'
@@ -23,6 +24,7 @@ function App() {
         
       <Route path="/Listar" element={<Listar/>}/>
       <Route path="/Aleatorios" element={<Aleatorios/>}/>
+      <Route path="/Capturados" element={<Capturados/>}/>
       <Route path="/Detalle" element={<Detalle/>}/>
       <Route path="/Favoritos" element={<Favoritos/>}/>
       <Route path="/Original" element={<Original/>}/>
