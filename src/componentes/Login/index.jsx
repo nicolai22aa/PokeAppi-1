@@ -1,52 +1,91 @@
-import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from
-'react-router-dom';
-import { AppProvider } from './contexto/contexto';
-import { supabase } from "./supabase";
-import Menu from './componentes/menu';
-import Aleatorios from './componentes/aleatorios';
-import Lista from './componentes/lista';
-import Capturados from './componentes/capturados';
-import Favoritos from './componentes/favoritos';
-import Usuarios from './componentes/usuarios';
-import Detalle from './componentes/detalle';
-import Login from './componentes/login';
-function App() {
-const [usuario, setUsuario] = useState(null);
-const [cargando, setCargando] = useState(true);
-useEffect(() => {
-async function verificarSesion() {
-const { data: { session } } = await supabase.auth.getSession();
-setUsuario(session?.user || null);
-setCargando(false);
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../supabase';
+
+function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [cargando, setCargando] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setCargando(true);
+    setError(null);
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setError('Usuario o contraseña no válidos');
+    } else {
+      navigate('/');
+    }
+
+    setCargando(false);
+  };
+
+  return (
+    <div style={{ maxWidth: '400px', margin: 'auto', padding: '2rem' }}>
+      <h2>Iniciar sesión</h2>
+      <form onSubmit={handleLogin}>
+        <input
+          type="email"
+          placeholder="Correo electrónico"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          style={{ width: '100%', marginBottom: '1rem', padding: '0.5rem' }}
+        />
+        <input
+          type="password"
+          placeholder="Contraseña"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          style={{ width: '100%', marginBottom: '1rem', padding: '0.5rem' }}
+        />
+        <button
+          type="submit"
+          disabled={cargando}
+          style={{
+            width: '100%',
+            padding: '0.75rem',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            cursor: 'pointer',
+          }}
+        >
+          {cargando ? 'Ingresando...' : 'Iniciar sesión'}
+        </button>
+        
+          <br></br>
+         
+
+        <br />
+        <button
+          type="button"
+          onClick={() => navigate('/registro')}
+          style={{
+            width: '100%',
+            padding: '0.75rem',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            cursor: 'pointer',
+            marginTop: '1rem',
+          }}
+        >
+          Registrarte
+        </button>
+      </form>
+      {error && <p style={{ color: 'red', marginTop: '1rem' }}>{error}</p>}
+    </div>
+  );
 }
-verificarSesion();
-// Escucha cambios en la sesión
-supabase.auth.onAuthStateChange((_event, session) => {setUsuario(session?.user || null);
-});
-}, []);
-if (cargando) return <p>Cargando...</p>;
-return (
-<AppProvider>
-<Router>
-{usuario && <Menu />}
-<Routes>
-<Route path="/" element={usuario ? <Lista /> : <Navigate to="/login"
-/>} />
-<Route path="/usuarios" element={usuario ? <Usuarios /> : <Navigate
-to="/login" />} />
-<Route path="/aleatorios" element={usuario ? <Aleatorios /> :
-<Navigate to="/login" />} />
-<Route path="/capturados" element={usuario ? <Capturados /> :
-<Navigate to="/login" />} />
-<Route path="/favoritos" element={usuario ? <Favoritos /> :
-<Navigate to="/login" />} />
-<Route path="/detalle/:name" element={usuario ? <Detalle /> :
-<Navigate to="/login" />} />
-<Route path="/login" element={<Login/>} />
-</Routes>
-</Router>
-</AppProvider>
-);
-}
-export default App;
+
+export default Login;
